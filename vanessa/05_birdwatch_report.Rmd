@@ -1,0 +1,122 @@
+```{r setup}
+library(here)
+library(scales)
+library(tidyverse)
+library(readr)
+
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load-}
+
+birdwatch_notes <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\birdwatch-public-data-2025-06-16-notes_filtered.tsv")
+filtered_rating <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\complete_filtered_ratings.tsv")
+
+view(birdwatch_notes)
+view(filtered_rating)
+
+```
+
+
+```{r join-notes-data}
+
+join_birdwatch_ratings <- left_join(birdwatch_notes, filtered_rating, by = "noteId")
+
+view(join_birdwatch_ratings)
+
+```
+
+```{r figure-2}
+
+birdwatch_notes %>%
+  count(classification, trustworthySources) %>%
+  ggplot(aes(x = classification, y = n, fill = factor(trustworthySources))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(fill = "Trustworthy Source")
+
+```
+
+```{r figure-3}
+birdwatch_notes %>%
+summarize(across(c(9:15),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+xlab("Misleading Type") +
+ylab("Number of Bird Watch Notes")
+
+```
+
+```{r figure 4}
+birdwatch_notes %>%
+summarize(across(c(16:20),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+xlab("Not Misleading Type") +
+ylab("Number of Bird Watch Notes")
+```
+
+```{r figure-5c}
+
+
+birdwatch_notes %>%
+  mutate(word_count = str_count(summary, "\\w+")) %>%
+  arrange(word_count) %>%
+  group_by(classification, word_count) %>%   # group by both
+  summarise(num_notes = n(), .groups = "drop") %>%
+  arrange(classification, word_count) %>%
+  group_by(classification) %>%
+  mutate(
+    cumulative_tot_notes = cumsum(num_notes),
+    frac_notes = 1 - (cumulative_tot_notes / sum(num_notes))
+  ) %>%
+  ggplot(aes(x = word_count, y = 100 * frac_notes, color = classification)) +
+  geom_line(size = 1) +
+    labs(
+    x = "Word Count",
+    y = "CCDF"
+  ) +
+  scale_y_log10(limit = c(0.01, 100),label = comma)
+```
+
+```{r figure-7b}
+num_votes <- join_birdwatch_ratings %>% filter(!is.na(helpful)) %>% nrow()
+num_votes
+
+join_birdwatch_ratings %>% group_by(classification)
+  mutate( cumulative_tot_notes = cumsum(num_votes), frac_votes = 1 - (cumulative_tot_votes / sum(num_votes))
+  ) %>%
+  ggplot(aes(x = num_votes, y = 100 * frac_votes, color = classification)) +
+  geom_line(size = 1) +
+    labs(
+    x = "Word Count",
+    y = "CCDF"
+  ) +
+  scale_y_log10(limit = c(0.01, 100),label = comma)
+
+
+```
+
+```{r figure-8}
+
+filtered_rating %>%
+summarize(across(c(10:17),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+xlab("Helpfulness Type") +
+ylab("Number of Ratings")
+
+```
+
+
+```{r figure-9}
+filtered_rating %>%
+summarize(across(c(19:29),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+xlab("Not Helpfulness Type") +
+ylab("Number of Ratings")
+
+```
