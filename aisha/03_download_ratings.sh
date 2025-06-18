@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# download all rating files from 0-19
 
 baseUrl="https://ton.twimg.com/birdwatch-public-data/2025/06/16/noteRatings/ratings-"
 outputDir="$HOME/C:\Users\ds3\Desktop\coursework\week4\project\aisha\data\birdwatch-ratings"
