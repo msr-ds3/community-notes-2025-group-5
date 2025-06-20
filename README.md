@@ -44,7 +44,7 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 ## Replication Steps
 
 1. **Read the paper**
-   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b 8, 9, and 10**. Other figures and tables not reproduced due to lack of access to proprietary data.
+   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b, 8, 9, and 10**. Other figures and tables not reproduced due to lack of access to proprietary data.
 
 2. **Download Data**
    Run the following shell scripts from the main directory to download and prepare the Birdwatch data:
