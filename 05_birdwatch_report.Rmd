@@ -12,10 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load community notes and ratings data
 ```{r}
 
-birdwatch_notes <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\aisha\\data\\birdwatch-public-data-2025-06-16-notes.tsv")
+birdwatch_notes <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\data\\birdwatch-public-data-2025-06-16-notes.tsv")
 birdwatch_notes
 
-birdwatch_ratings <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\aisha\\data\\complete_filtered_ratings.tsv")
+birdwatch_ratings <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\data\\complete_filtered_ratings.tsv")
 birdwatch_ratings
 
 head(birdwatch_notes)
@@ -186,7 +186,7 @@ birdwatch_ratings |>
 # Logistic Regression
 ```{r logistic-regression-helpful}
  
-load("C:/Users/ds3/coursework/week4/project/community-notes-2025-group-5/aisha/data/source_tweets.Rdata", ournew_env <- new.env())
+load("C:/Users/ds3/coursework/week4/project/community-notes-2025-group-5/data/source_tweets.Rdata", ournew_env <- new.env())
 source_tweets <- ournew_env[["."]]
 glimpse(source_tweets)
  
