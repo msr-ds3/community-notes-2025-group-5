@@ -1,4 +1,18 @@
-```{r setup}
+
+---
+title: "Replication of \"Community-Based Fact-Checking on Twitter's Birdwatch Platform\""
+author: "Aisha Malik (CUNY Hunter College) & Vanessa Reino (Rider University)"
+date: "6/20/2025"
+output:
+  html_document:
+    theme: readable
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+
+```{r setup, warning=FALSE, message=FALSE}
 library(here)
 library(scales)
 library(tidyverse)
@@ -12,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Load community notes and rating data 
-```{r load-data}
+```{r load-data, warning=FALSE, message=FALSE}
 
 birdwatch_notes <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\birdwatch-public-data-2025-06-16-notes_filtered.tsv")
 filtered_rating <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\complete_filtered_ratings.tsv")
@@ -22,7 +36,7 @@ view(filtered_rating)
 ```
 
 # Merge Data Frames
-```{r join-notes-data}
+```{r join-notes-data, warning=FALSE, message=FALSE}
 
 join_birdwatch_ratings <- left_join(birdwatch_notes, filtered_rating, by = "noteId")
 
@@ -31,7 +45,7 @@ view(join_birdwatch_ratings)
 ```
 
 # Develop figures (2, 3, 4, 5c, 7a, 7b, 8 ,9)
-```{r figure-2}
+```{r figure-2, warning=FALSE, message=FALSE}
 
 birdwatch_notes %>%
   count(classification, trustworthySources) %>%
@@ -41,7 +55,7 @@ birdwatch_notes %>%
 
 ```
 
-```{r figure-3}
+```{r figure-3, warning=FALSE, message=FALSE}
 birdwatch_notes %>%
 summarize(across(c(9:15),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
@@ -51,7 +65,7 @@ ylab("Number of Bird Watch Notes")
 
 ```
 
-```{r figure-4}
+```{r figure-4, warning=FALSE, message=FALSE}
 birdwatch_notes %>%
 summarize(across(c(16:20),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
@@ -60,7 +74,7 @@ xlab("Not Misleading Type") +
 ylab("Number of Bird Watch Notes")
 ```
 
-```{r figure-5c}
+```{r figure-5c, warning=FALSE, message=FALSE}
 
 birdwatch_notes %>%
   mutate(word_count = str_count(summary, "\\w+")) %>%
@@ -82,7 +96,7 @@ birdwatch_notes %>%
   scale_y_log10(limit = c(0.01, 100),label = comma)
 ```
 
-```{r figure-7a}
+```{r figure-7a, warning=FALSE, message=FALSE}
 
 join_birdwatch_ratings %>% filter(!is.na(helpful)) %>%
 group_by(noteId, classification) %>% 
@@ -106,7 +120,7 @@ group_by(noteId, classification) %>%
 
 ```
 
-```{r figure-7b}
+```{r figure-7b, warning=FALSE, message=FALSE}
 
 join_birdwatch_ratings %>% group_by(classification, noteId) %>% 
   count() %>% 
@@ -124,7 +138,7 @@ join_birdwatch_ratings %>% group_by(classification, noteId) %>%
 
 ```
 
-```{r figure-8}
+```{r figure-8, warning=FALSE, message=FALSE}
 
 filtered_rating %>%
 summarize(across(c(10:17),sum)) %>% 
@@ -136,7 +150,7 @@ ylab("Number of Ratings")
 ```
 
 
-```{r figure-9}
+```{r figure-9, warning=FALSE, message=FALSE}
 filtered_rating %>%
 summarize(across(c(19:29),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
@@ -148,7 +162,7 @@ ylab("Number of Ratings")
 
 
 # Logistic Regression
-```{r clean-data}
+```{r clean-data, warning=FALSE, message=FALSE}
 
 load("C:/Users/ds3/Desktop/coursework/week4/project/community-notes-2025-group-5/vanessa/data/source_tweets.Rdata", ournew_env <- new.env())
 source_tweets <- ournew_env[["."]]
@@ -180,7 +194,7 @@ join_notes_rating_tweets %>% mutate(across(c(source_followers_count, source_frie
 
 ```
 
-```{R mdel}
+```{R model, warning=FALSE, message=FALSE}
 
 library(broom)
 library(tidyverse)
@@ -198,7 +212,7 @@ print(model)
 
 ``` 
 
-```{r plot-model}
+```{r plot-model, warning=FALSE, message=FALSE}
   ggplot(model, aes(x = estimate, y = term)) +
     geom_point() +
     geom_errorbar(aes(xmin = conf.low, xmax = conf.high)) +
@@ -216,7 +230,7 @@ print(model)
 
 ```
 
-```{r figure-10}
+```{r figure-10, warning=FALSE, message=FALSE}
 
 library(MASS)
 
