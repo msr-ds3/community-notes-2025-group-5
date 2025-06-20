@@ -1,318 +1,285 @@
-```{r setup, include=FALSE}
+```{r setup}
 library(here)
 library(scales)
 library(tidyverse)
+library(readr)
+library(here)
+library(parameters)
 
 theme_set(theme_bw())
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Load community notes and rating data 
+```{r load-data}
 
-# Load community notes and ratings data
-```{r}
-
-birdwatch_notes <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\data\\birdwatch-public-data-2025-06-16-notes.tsv")
-birdwatch_notes
-
-birdwatch_ratings <- read_tsv("C:\\Users\\ds3\\coursework\\week4\\project\\community-notes-2025-group-5\\data\\complete_filtered_ratings.tsv")
-birdwatch_ratings
-
-head(birdwatch_notes)
-head(birdwatch_ratings)
+birdwatch_notes <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\birdwatch-public-data-2025-06-16-notes_filtered.tsv")
+filtered_rating <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\complete_filtered_ratings.tsv")
+view(birdwatch_notes)
+view(filtered_rating)
 
 ```
 
+# Merge Data frames
+```{r join-notes-data}
 
-# Merge dataframes
-```{r}
+join_birdwatch_ratings <- left_join(birdwatch_notes, filtered_rating, by = "noteId")
 
-birdwatch_public_data <- left_join(birdwatch_notes, birdwatch_ratings, by = "noteId")
-birdwatch_public_data
-view(birdwatch_public_data)
-colnames(birdwatch_public_data)
+view(join_birdwatch_ratings)
 
 ```
 
-
-# Develop figures (2, 3, 4, 5c, 7a, 7b, 8, 9)
+# Develop figures (2, 3, 4, 5c, 7a, 7b, 8 ,9)
 ```{r figure-2}
 
-birdwatch_notes |>
-    count(classification, trustworthySources) |>
-    ggplot(aes(x = classification, y = n, fill = as.factor(trustworthySources))) +
-    geom_bar(stat = "identity", position = "stack") +
-    labs(fill = "Trustworthy") +
-    theme_minimal()
-
-colnames(birdwatch_notes)
+birdwatch_notes %>%
+  count(classification, trustworthySources) %>%
+  ggplot(aes(x = classification, y = n, fill = factor(trustworthySources))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(fill = "Trustworthy Source")
 
 ```
 
 ```{r figure-3}
-
-colnames(birdwatch_notes)
-
-birdwatch_notes |>
-    summarize(across(c((9:15)), sum)) |>
-    pivot_longer(everything(), names_to = "misleading_type", values_to = "total_count") |>
-    mutate(misleading_type = fct_reorder(misleading_type, total_count)) |>
-    ggplot(aes(x = misleading_type, y = total_count)) +
-    geom_bar(stat = "identity", fill = "dark red") +
-    coord_flip() +
-    xlab("Misleading Type") +
-    ylab("Number of Birdwatch Notes")
-
+birdwatch_notes %>%
+summarize(across(c(9:15),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+xlab("Misleading Type") +
+ylab("Number of Bird Watch Notes")
 
 ```
 
-
 ```{r figure-4}
-
-colnames(birdwatch_notes)
-
-birdwatch_notes |>
-    summarize(across(c((16:20)), sum)) |>
-    pivot_longer(everything(), names_to = "misleading_type", values_to = "total_count") |>
-    mutate(misleading_type = fct_reorder(misleading_type, total_count)) |>
-    ggplot(aes(x = misleading_type, y = total_count)) +
-    geom_bar(stat = "identity", fill = "dark blue") +
-    coord_flip() +
-    xlab("Not Misleading Type") +
-    ylab("Number of Birdwatch Notes")
-
+birdwatch_notes %>%
+summarize(across(c(16:20),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+xlab("Not Misleading Type") +
+ylab("Number of Bird Watch Notes")
 ```
 
 ```{r figure-5c}
 
-library(scales)
-colnames(birdwatch_notes)
-
-birdwatch_notes |>
-    mutate(word_count = str_count(summary, "\\w+")) |>
-    arrange(word_count) |>
-    group_by(classification, word_count) |>  # group by both
-    summarise(num_notes = n(), .groups = "drop") |>
-    arrange(classification, word_count) |>
-    group_by(classification) |>
-    mutate(
+birdwatch_notes %>%
+  mutate(word_count = str_count(summary, "\\w+")) %>%
+  arrange(word_count) %>%
+  group_by(classification, word_count) %>%   # group by both
+  summarise(num_notes = n(), .groups = "drop") %>%
+  arrange(classification, word_count) %>%
+  group_by(classification) %>%
+  mutate(
     cumulative_tot_notes = cumsum(num_notes),
-    frac_notes = 1 - (cumulative_tot_notes / sum(num_notes))) |>
-    ggplot(aes(x = word_count, y = frac_notes*100, color = classification)) +
-    geom_line() +
-    labs(x = "Word Count", y = "CCDF (%)", title = "CCDF of Word Count by Classification") +
-    scale_y_log10(limits = c(0.01, 100), labels = comma)
-
+    frac_notes = 1 - (cumulative_tot_notes / sum(num_notes))
+  ) %>%
+  ggplot(aes(x = word_count, y = 100 * frac_notes, color = classification)) +
+  geom_line(size = 1) +
+    labs(
+    x = "Word Count",
+    y = "CCDF"
+  ) +
+  scale_y_log10(limit = c(0.01, 100),label = comma)
 ```
 
 ```{r figure-7a}
 
-colnames(birdwatch_public_data)
-view(birdwatch_public_data)
+join_birdwatch_ratings %>% filter(!is.na(helpful)) %>%
+group_by(noteId, classification) %>% 
+  summarise(total_votes = n(), helpful_votes = sum(helpful == 1), ratio_helpful = helpful_votes / total_votes, .groups = "drop")%>%
+    count(classification, ratio_helpful) %>%
+    arrange(ratio_helpful) %>%
+    group_by(classification) %>%
+  mutate(
+    cumulative_tot_votes = cumsum(n),
+    frac_votes = 1 - (cumulative_tot_votes / sum(n))
+  ) %>%
+  ggplot(aes(x = ratio_helpful , y = frac_votes, color = classification)) +
+  geom_line() +
+  labs(
+  x = "Ratio Helpful",
+  y = "CCDF(%)"
+  ) +
+   scale_y_log10(limit = c(0.01, 100),label = comma)
 
-# total_votes <- birdwatch_public_data |> filter(!is.na(helpful)) |> nrow()
-# total_votes
-# helpful_votes <- birdwatch_public_data |> summarise(helpful_votes = sum(helpful == 1, na.rm = TRUE))
-# helpful_votes
-# total_ratio <- helpful_votes / total_votes
-# total_ratio
-
-birdwatch_public_data |>
-    filter(!is.na(helpful)) |>
-    group_by(noteId, classification) |>
-    summarise(total_votes = n(), helpful_votes = sum(helpful == 1), ratio = helpful_votes / total_votes, .groups = "drop") |>
-    count(classification, ratio) |>
-    arrange(ratio) |>
-    group_by(classification) |>
-    mutate(cumulative_total_ratio = cumsum(n), frac_ratio = 1 - (cumulative_total_ratio / sum(n))) |>
-    ggplot(aes(x = ratio, y = frac_ratio, color = classification)) +
-    geom_line() +
-    labs(x = "Ratio helpful", y = "CCDF (%)", title = "Helpfulness ratio") +
-    scale_y_log10(limits = c(0.01, 100), label = comma)
 
 
 ```
 
 ```{r figure-7b}
 
-colnames(birdwatch_public_data)
-view(birdwatch_public_data)
-
-birdwatch_public_data |>
-    count(classification, noteId) |>
-    arrange(n) |>
-    group_by(classification) |>
-    mutate(cumulative_total_votes = cumsum(n), frac_votes = 1 - (cumulative_total_votes / sum(n))) |>
-    ggplot(aes(x = n, y = frac_votes*100, color = classification)) +
-    geom_line() +
-    labs(x = "Votes (helpful & not helpful)", y = "CCDF (%)", title = "Total votes") +
-    scale_y_log10(limits = c(0.01, 100), label = comma)
+join_birdwatch_ratings %>% group_by(classification, noteId) %>% 
+  count() %>% 
+   arrange(n) %>%
+  group_by(classification) %>%
+  mutate(cumulative_tot_votes = cumsum(n), frac_votes = 1 - (cumulative_tot_votes / sum(n))) %>%
+  ggplot(aes(x = n , y = 100 * frac_votes, color = classification)) +
+  geom_line() +
+  labs(
+  x = "Word Count",
+  y = "CCDF"
+  ) +
+   scale_y_log10(limit = c(0.01, 100),label = comma)
 
 
 ```
 
 ```{r figure-8}
 
-colnames(birdwatch_ratings)
-
-birdwatch_ratings |>
-    summarize(across(c((10:17)), sum)) |>
-    pivot_longer(everything(), names_to = "helpful_type", values_to = "total_count") |>
-    mutate(helpful_type = fct_reorder(helpful_type, total_count)) |>
-    ggplot(aes(x = helpful_type, y = total_count)) +
-    geom_bar(stat = "identity", fill = "dark blue") +
-    coord_flip() +
-    xlab("Helpful Type") +
-    ylab("Number of Ratings")
+filtered_rating %>%
+summarize(across(c(10:17),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+xlab("Helpfulness Type") +
+ylab("Number of Ratings")
 
 ```
 
+
 ```{r figure-9}
+filtered_rating %>%
+summarize(across(c(19:29),sum)) %>% 
+pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
+ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+xlab("Not Helpfulness Type") +
+ylab("Number of Ratings")
 
-birdwatch_ratings |>
-    summarize(across(c((19:29)), sum)) |>
-    pivot_longer(everything(), names_to = "non_helpful_type", values_to = "total_count") |>
-    mutate(non_helpful_type = fct_reorder(non_helpful_type, total_count)) |>
-    ggplot(aes(x = non_helpful_type, y = total_count)) +
-    geom_bar(stat = "identity", fill = "dark blue") +
-    coord_flip() +
-    xlab("Not Helpful Type") +
-    ylab("Number of Birdwatch Notes")
-
-
-``` 
+```
 
 
 # Logistic Regression
-```{r logistic-regression-helpful}
- 
-load("C:/Users/ds3/coursework/week4/project/community-notes-2025-group-5/data/source_tweets.Rdata", ournew_env <- new.env())
+```{r clean-data}
+
+load("C:/Users/ds3/Desktop/coursework/week4/project/community-notes-2025-group-5/vanessa/data/source_tweets.Rdata", ournew_env <- new.env())
 source_tweets <- ournew_env[["."]]
-glimpse(source_tweets)
- 
-library(dplyr)
-library(stringr)
+View(source_tweets)
+
+birdwatch_notes_wordcount <- birdwatch_notes %>%
+  mutate(word_count = str_count(summary, "\\w+")) %>%
+  arrange(desc(word_count))
+  view(birdwatch_notes_wordcount)
+
+join_notes_rating_tweets <- filtered_rating %>% select(noteId, helpful)
+view(join_notes_rating_tweets)
+
+join_notes_rating_tweets <- source_tweets %>%
+  inner_join(birdwatch_notes_wordcount, by = "noteId") %>%
+  inner_join(join_notes_rating_tweets, by = "noteId")
+
+view(join_notes_rating_tweets)
+
+# Ensure classification is a factor or numeric and not introducing NAs
+join_notes_rating_tweets <- join_notes_rating_tweets %>%
+  mutate(
+    classification = as.factor(classification),
+    account_age = as.integer(interval(source_account_created_at, Sys.Date()) / years(1))
+  )
+view(join_notes_rating_tweets)
+
+join_notes_rating_tweets %>% mutate(across(c(source_followers_count, source_friends_count, word_count, account_age), scale))
+
+```
+
+```{R mdel}
+
 library(broom)
+library(tidyverse)
 
-birdwatch_model_data <- birdwatch_public_data |>
-  filter(!is.na(helpful), !is.na(summary), !is.na(createdAtMillis.x)) |>
-  mutate(
-    created_at = as.POSIXct(createdAtMillis.x / 1000, origin = "1970-01-01", tz = "UTC"),
-    Helpful = as.numeric(helpful > 0),
-    Misleading = ifelse(classification == "MISINFORMED_OR_POTENTIALLY_MISLEADING", 1, 0),
-    TrustworthySources = as.numeric(trustworthySources),
-    WordCount = str_count(summary, "\\w+")) |>
-  filter(!is.na(Helpful), !is.na(Misleading), !is.na(TrustworthySources), !is.na(WordCount))
+model <- glm(helpful~ classification + trustworthySources + word_count + account_age + source_friends_count + source_followers_count + source_verified,data = join_notes_rating_tweets, family = binomial)
 
-merged_data <- birdwatch_model_data |>
-  left_join(source_tweets |> select(noteId, source_friends_count, source_followers_count, source_verified, source_account_created_at), by = "noteId") |>
-  mutate(SourceAccountAge = as.numeric(difftime(created_at, source_account_created_at, units = "days")) / 365)
+model <- tidy(model, conf.int = TRUE, conf.level = 0.99)
+summary(model)
 
 
-final_data <- merged_data |>
-  filter(!is.na(source_friends_count), !is.na(source_followers_count), !is.na(source_verified), !is.na(SourceAccountAge)) |>
-  mutate(
-    source_verified = as.numeric(source_verified),
-    across(c(Misleading, TrustworthySources, WordCount, source_friends_count, source_followers_count, source_verified, SourceAccountAge), scale))
+join_notes_rating_tweets_pred <- join_notes_rating_tweets
+  view(join_notes_rating_tweets_pred)
 
-model <- glm(
-  Helpful ~ Misleading + TrustworthySources + WordCount + source_friends_count + source_followers_count + source_verified + SourceAccountAge,
-  data = final_data,
-  family = binomial(link = "logit")
-)
+print(model)
 
-model_summary <- tidy(model, conf.int = TRUE, conf.level = 0.99)
-print(model_summary)
+``` 
 
-model_summary <- model_summary |>
-  mutate(term = recode(term,
-    "Misleading" = "Misleading",
-    "TrustworthySources" = "Trustworthy Sources",
-    "WordCount" = "Word Count",
-    "source_friends_count" = "Source Friends Count",
-    "source_followers_count" = "Source Followers Count",
-    "source_verified" = "Source Verified",
-    "SourceAccountAge" = "Source Account Age"
-  ))
-
-ggplot(model_summary, aes(x = estimate, y = term)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +
-  labs(title = "Logistic Regression on Helpful (Binary)", x = "Standardized Coefficient Estimate", y = NULL) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1.1)) +
-  coord_flip()
+```{r plot-model}
+  ggplot(model, aes(x = estimate, y = term)) +
+    geom_point() +
+    geom_errorbar(aes(xmin = conf.low, xmax = conf.high)) +
+    coord_flip() +
+    scale_y_discrete(labels = c(
+      "classificationNOT_MISLEADING" = "Misleading",
+      "trustworthySources" = "Trustworthy Sources",
+      "word_count" = "Word Count",
+      "account_age" = "Account Age",
+      "source_friends_count" = "Friends Count",
+      "source_followers_count" = "Followers Count",
+      "source_verifiedTRUE" = "Verified"
+    )) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ```
 
 ```{r figure-10}
 
-# helpfulness ratio
-final_data |>
-    filter(!is.na(helpful)) |>
-    group_by(noteId, classification) |>
-    mutate(total_votes = n(), helpful_votes = sum(helpful == 1), ratio = helpful_votes / total_votes, .groups = "drop")
-
-final_data <- final_data |>
-  group_by(noteId) |>
-  mutate(helpful_votes = sum(Helpful, na.rm = TRUE),total_votes = n(), helpfulness_ratio = helpful_votes / total_votes) |>
-  ungroup() |>
-  filter(!is.na(helpfulness_ratio), is.finite(helpfulness_ratio))
-
-model_ratio <- lm(
-  helpfulness_ratio ~ Misleading + TrustworthySources + WordCount + source_friends_count + source_followers_count + source_verified + SourceAccountAge,
-  data = final_data)
-
-model_summary_ratio <- tidy(model_ratio, conf.int = TRUE, conf.level = 0.99)
-print(model_summary_ratio)
-
-
-# votes (helpful & not helpful)
 library(MASS)
 
-final_data <- final_data |>
-  mutate(
-    source_verified = as.numeric(source_verified),
-    across(c(Misleading, TrustworthySources, WordCount, source_friends_count, source_followers_count, source_verified, SourceAccountAge), scale, .names = "{.col}_z"))
+model_data <- join_notes_rating_tweets_pred %>% group_by(noteId) %>% mutate(helpful_votes = sum(helpful, na.rm = TRUE),
+  total_votes = n(), helpfulness_ratio = helpful_votes / total_votes) %>%
+  ungroup() %>% filter(!is.na(helpfulness_ratio),is.finite(helpfulness_ratio))
+view(model_data)
 
-model_votes <- glm.nb(
-  total_votes ~ Misleading_z + TrustworthySources_z + WordCount_z + source_friends_count_z + source_followers_count_z + source_verified_z + SourceAccountAge_z,
-  data = final_data
-)
+lm_helpfullness_ratio <- lm( helpfulness_ratio~ classification + trustworthySources + word_count + 
+                       account_age + source_friends_count + source_followers_count + source_verified,
+                     data = model_data )
+
+helpfullness_ratio_summary <- tidy(lm_helpfullness_ratio, conf.int = TRUE, conf.level = 0.99)
+print(helpfullness_ratio_summary)
+
+model_data <- model_data %>%
+  mutate(source_verified = as.numeric(source_verified), 
+  classification = as.numeric(classification),
+  trustworthySources = as.numeric(trustworthySources)) %>%
+  mutate(across(c(classification, trustworthySources, word_count, source_friends_count, source_followers_count, source_verified, account_age), scale, .names = "{.col}_z"))
+
+model_votes <- glm.nb(total_votes ~ classification_z + trustworthySources_z + word_count_z + source_friends_count_z +
+  source_followers_count_z + source_verified_z + account_age_z, data = model_data)
 
 model_summary_votes <- tidy(model_votes, conf.int = TRUE, conf.level = 0.99)
-print(model_summary_ratio)
+print(model_summary_votes)
 
-
-# figure development
-model_summary_ratio <- model_summary_ratio |>mutate(DV = "Helpfulness Ratio")
+helpfullness_ratio_summary <- helpfullness_ratio_summary %>% mutate(DV = "Helpfulness Ratio")
 model_summary_votes <- model_summary_votes |> mutate(DV = "Total Votes")
 
-combined_summary <- bind_rows(model_summary_ratio, model_summary_votes)
+combined_summary <- bind_rows(helpfullness_ratio_summary, model_summary_votes)
 
 combined_summary <- combined_summary |>
   filter(term != "(Intercept)") |>
   mutate(
     term = case_when(
-      grepl("Misleading", term) ~ "Misleading",
-      grepl("TrustworthySources", term) ~ "Trustworthy Sources",
-      grepl("WordCount", term) ~ "Word Count",
+      grepl("classification", term) ~ "Misleading",
+      grepl("trustworthySources", term) ~ "Trustworthy Sources",
+      grepl("word_count", term) ~ "Word Count",
       grepl("source_friends_count", term) ~ "Source Friends Count",
       grepl("source_followers_count", term) ~ "Source Followers Count",
       grepl("source_verified", term) ~ "Source Verified",
-      grepl("SourceAccountAge", term) ~ "Source Account Age",
+      grepl("account_age", term) ~ "Source Account Age",
       TRUE ~ term
     )
   )
 
-ggplot(combined_summary, aes(x = estimate, y = term, color = DV)) +
+  ggplot(combined_summary, aes(x = estimate, y = term, color = DV)) +
   geom_point(position = position_dodge(width = 0.5)) +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, position = position_dodge(width = 0.5)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
   labs(title = "Figure 10: Regression Results", x = "Standardized Coefficient Estimate", y = NULL, color = "Dependent Variable") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1.1)) +
-  coord_flip()
-
+  coord_flip() +
+  scale_y_discrete(labels = c(
+  "classificationNOT_MISLEADING" = "Misleading",
+  "trustworthySources" = "Trustworthy Sources",
+  "word_count" = "Word Count",
+  "account_age" = "Account Age",
+  "source_friends_count" = "Friends Count",
+  "source_followers_count" = "Followers Count",
+  "source_verifiedTRUE" = "Verified"
+    )) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
+

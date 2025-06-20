@@ -1,11 +1,3 @@
-#!/bin/bash
-
-# # use curl or wget to download the version 2 of the total counts file, googlebooks-eng-all-totalcounts-20120701.txt
-# curl -o birdwatch-public-data/2025/06/16/noteRatings/ratings.gz https://ton.twimg.com/birdwatch-public-data/2025/06/16/noteRatings/ratings-000xx.zip
-# # update the timestamp on the resulting file using touch
-# # do not remove, this will keep make happy and avoid re-downloading of the data once you have it
-# touch birdwatch-public-data/2025/06/16/noteRatings/ratings.gz
-
 
 # Base URL for the ratings data
 baseUrl="https://ton.twimg.com/birdwatch-public-data/2025/06/16/noteRatings/ratings-"
