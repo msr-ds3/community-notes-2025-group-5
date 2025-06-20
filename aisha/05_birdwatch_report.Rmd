@@ -174,7 +174,7 @@ birdwatch_ratings |>
     pivot_longer(everything(), names_to = "non_helpful_type", values_to = "total_count") |>
     mutate(non_helpful_type = fct_reorder(non_helpful_type, total_count)) |>
     ggplot(aes(x = non_helpful_type, y = total_count)) +
-    geom_bar(stat = "identity", fill = "dark blue") +
+    geom_bar(stat = "identity", fill = "dark red") +
     coord_flip() +
     xlab("Not Helpful Type") +
     ylab("Number of Birdwatch Notes")
