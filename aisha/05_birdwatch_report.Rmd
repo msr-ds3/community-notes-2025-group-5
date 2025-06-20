@@ -106,6 +106,51 @@ birdwatch_notes %>%
 
 ```
 
+```{r figure-7a}
+
+colnames(birdwatch_public_data)
+view(birdwatch_public_data)
+
+# total_votes <- birdwatch_public_data |> filter(!is.na(helpful)) |> nrow()
+# total_votes
+# helpful_votes <- birdwatch_public_data |> summarise(helpful_votes = sum(helpful == 1, na.rm = TRUE))
+# helpful_votes
+# total_ratio <- helpful_votes / total_votes
+# total_ratio
+
+birdwatch_public_data |>
+    filter(!is.na(helpful)) |>
+    group_by(noteId, classification) |>
+    summarise(total_votes = n(), helpful_votes = sum(helpful == 1), ratio = helpful_votes / total_votes, .groups = "drop") |>
+    count(classification, ratio) |>
+    arrange(ratio) |>
+    group_by(classification) |>
+    mutate(cumulative_total_ratio = cumsum(n), frac_ratio = 1 - (cumulative_total_ratio / sum(n))) |>
+    ggplot(aes(x = ratio, y = frac_ratio, color = classification)) +
+    geom_line() +
+    labs(x = "Ratio helpful", y = "CCDF (%)", title = "Helpfulness ratio") +
+    scale_y_log10(limits = c(0.01, 100), label = comma)
+
+
+```
+
+```{r figure-7b}
+
+colnames(birdwatch_public_data)
+view(birdwatch_public_data)
+
+birdwatch_public_data |>
+    count(classification, noteId) |>
+    arrange(n) |>
+    group_by(classification) |>
+    mutate(cumulative_total_votes = cumsum(n), frac_votes = 1 - (cumulative_total_votes / sum(n))) |>
+    ggplot(aes(x = n, y = frac_votes*100, color = classification)) +
+    geom_line() +
+    labs(x = "Votes (helpful & not helpful)", y = "CCDF (%)", title = "Total votes") +
+    scale_y_log10(limits = c(0.01, 100), label = comma)
+
+
+```
 
 ```{r figure-8}
 
@@ -138,49 +183,3 @@ birdwatch_ratings |>
 
 ``` 
 
-
-```{r figure-7b}
-
-colnames(birdwatch_public_data)
-view(birdwatch_public_data)
-
-birdwatch_public_data |>
-    count(classification, noteId) |>
-    arrange(n) |>
-    group_by(classification) |>
-    mutate(cumulative_total_votes = cumsum(n), frac_votes = 1 - (cumulative_total_votes / sum(n))) |>
-    ggplot(aes(x = n, y = frac_votes*100, color = classification)) +
-    geom_line() +
-    labs(x = "Votes (helpful & not helpful)", y = "CCDF (%)", title = "Total votes") +
-    scale_y_log10(limits = c(0.01, 100), label = comma)
-
-
-```
-
-```{r figure-7a}
-
-colnames(birdwatch_public_data)
-view(birdwatch_public_data)
-
-# total_votes <- birdwatch_public_data |> filter(!is.na(helpful)) |> nrow()
-# total_votes
-# helpful_votes <- birdwatch_public_data |> summarise(helpful_votes = sum(helpful == 1, na.rm = TRUE))
-# helpful_votes
-# total_ratio <- helpful_votes / total_votes
-# total_ratio
-
-birdwatch_public_data |>
-    filter(!is.na(helpful)) |>
-    group_by(noteId, classification) |>
-    summarise(total_votes = n(), helpful_votes = sum(helpful == 1), ratio = helpful_votes / total_votes, .groups = "drop") |>
-    count(classification, ratio) |>
-    arrange(ratio) |>
-    group_by(classification) |>
-    mutate(cumulative_total_ratio = cumsum(n), frac_ratio = 1 - (cumulative_total_ratio / sum(n))) |>
-    ggplot(aes(x = ratio, y = frac_ratio, color = classification)) +
-    geom_line() +
-    labs(x = "Ratio helpful", y = "CCDF (%)", title = "Helpfulness ratio") +
-    scale_y_log10(limits = c(0.01, 100), label = comma)
-
-
-```
