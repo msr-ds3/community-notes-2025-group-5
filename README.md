@@ -1,5 +1,7 @@
 # Replication of “Community-Based Fact-Checking on Twitter’s Birdwatch Platform”
 
+By Aisha Malik (CUNY Hunter College) & Vanessa Reino (Rider University)
+
 ## Overview
 
 This project is a replication and partial extension of the paper:
