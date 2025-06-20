@@ -31,7 +31,7 @@ To run the analysis, make sure the following R packages are installed:
 | `MASS`       | Provides functions and datasets to support Venables and Ripley's *Modern Applied Statistics with S*. Includes tools for fitting statistical models. |
 | `broom`      | Converts statistical analysis objects (e.g., models) into tidy data frames for easy plotting and comparison.                                        |
 
-> 💡 You'll also need a **Bash shell** to execute the `.sh` scripts located in the `scripts/` folder. These scripts automate downloading and formatting of Birdwatch data.
+> You'll also need a **Bash shell** to execute the `.sh` scripts located in the `scripts/` folder. These scripts automate downloading and formatting of Birdwatch data.
 
 To install all packages in R:
 
@@ -101,5 +101,3 @@ Ultimately, this extension seeks to:
 * All code is written to be reproducible and transparent.
 * Please cite the original authors for any derived work or insights.
 * Special thanks to the MSR DS3 team and Johan Ugander for the inspiration.
-
-
