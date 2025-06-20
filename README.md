@@ -49,6 +49,11 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 2. **Download Data**
    Run the following shell scripts from the main directory to download and prepare the Birdwatch data:
 
+   * `01_download_notes_data.sh`
+   * `02_filter_notes_data.sh`
+   * `03_download_ratings.sh`
+   * `04_reformat_ratings.sh`
+
 3. **Analyze in R**
    The notebook `05_birdwatch_report.Rmd` contains the full analysis code and commentary.
 
