@@ -128,7 +128,7 @@ birdwatch_public_data |>
     ggplot(aes(x = ratio, y = frac_ratio, color = classification)) +
     geom_line() +
     labs(x = "Ratio helpful", y = "CCDF (%)", title = "Helpfulness ratio") +
-    scale_y_log10(limits = c(0.01, 100), labels = comma)
+    scale_y_log10(limits = c(0.01, 100), label = comma)
 
 
 ```
@@ -146,7 +146,7 @@ birdwatch_public_data |>
     ggplot(aes(x = n, y = frac_votes*100, color = classification)) +
     geom_line() +
     labs(x = "Votes (helpful & not helpful)", y = "CCDF (%)", title = "Total votes") +
-    scale_y_log10(limits = c(0.01, 100), labels = comma)
+    scale_y_log10(limits = c(0.01, 100), label = comma)
 
 
 ```
