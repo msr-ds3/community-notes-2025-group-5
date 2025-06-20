@@ -13,7 +13,7 @@ This replication effort was inspired by a talk by **Johan Ugander** at the Micro
 
 We replicate the results for Figures **2–4, 5c, and 7–10** from the original paper and provide an exploratory extension on political bias in user evaluations.
 
-You can view the full interactive HTML report, including all replicated figures and extension results, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/7cd203ab0967735320bc549fb6eeb41c84c8ca40/05_birdwatch_report.html#Logistic_Regression)
+You can view the full interactive HTML report, including all replicated figures and extension results, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/7cd203ab0967735320bc549fb6eeb41c84c8ca40/05_birdwatch_report.html)
 
 ---
 
