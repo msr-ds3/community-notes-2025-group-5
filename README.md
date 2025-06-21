@@ -96,7 +96,7 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 > How does the political leaning of Birdwatch users — ranging from conservative to democratic — influence their likelihood of rating Community Notes as “misleading” or “not misleading,” especially on politically charged tweets?
 
 **Goal:**
-This question aims to explore whether **user-assigned political orientation** affects the evaluation of fact-checking content within Community Notes. Unlike previous analyses that focused on the **content of tweets or notes themselves**, this extension shifts the lens to **user behavior and cognitive bias**. Specifically, we investigate how individuals with different ideological leanings assess the credibility of the same information.
+This question aims to explore whether **user-assigned political orientation** affects the evaluation of fact-checking content within Community Notes. Unlike previous analyses that focused on the **content of tweets or notes themselves**, this conceptual extension shifts the lens to **user behavior and cognitive bias**. Specifically, how individuals with different ideological leanings assess the credibility of the same information.
 
 The objective is to uncover **systemic patterns** that may reveal how political identity influences the interpretation of fact-checking efforts. This includes examining whether users across the political spectrum rate the same notes differently, particularly when notes are associated with politically sensitive or polarizing topics.
 
