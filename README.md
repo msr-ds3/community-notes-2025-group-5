@@ -1,6 +1,6 @@
 # Replication of “Community-Based Fact-Checking on Twitter’s Birdwatch Platform”
 
-By Aisha Malik (CUNY Hunter College) & Vanessa Reino (Rider University)
+By: Aisha Malik (CUNY Hunter College) & Vanessa Reino (Rider University)
 
 ## Overview
 
@@ -48,7 +48,7 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 ## Replication Steps
 
 1. **Read the paper**
-   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b, 8, 9, and 10**. Other figures and tables not reproduced due to lack of access to proprietary data.
+   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b, 8, 9, and 10**.
 
 2. **Download Data**
    Run the following shell scripts from the main directory to download and prepare the Birdwatch data:
@@ -78,6 +78,14 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 
 * **Documentation**
   [Community Notes Guide](https://communitynotes.x.com/guide/en/under-the-hood/ranking-notes)
+
+---
+
+## Limitations & Data Notes
+
+* Our dataset was slightly smaller than that used in the original paper, containing **9,377 notes** and **45,885 ratings**, compared to **11,802 notes** and **52,981 ratings** in the original study.
+
+* Features including **sentiment** and **text complexity** were not included in the regression analysis, as these required additional NLP processing.
 
 ---
 
