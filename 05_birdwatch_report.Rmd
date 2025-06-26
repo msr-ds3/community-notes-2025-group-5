@@ -25,7 +25,7 @@ theme_set(theme_bw())
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Load community notes and rating data 
+## Load community notes and rating data 
 ```{r load-data, warning=FALSE, message=FALSE}
 
 birdwatch_notes <- read_tsv("C:\\Users\\ds3\\Desktop\\coursework\\week4\\project\\community-notes-2025-group-5\\vanessa\\birdwatch-public-data-2025-06-16-notes_filtered.tsv")
@@ -35,7 +35,7 @@ view(filtered_rating)
 
 ```
 
-# Merge Data Frames
+## Merge Data Frames
 ```{r join-notes-data, warning=FALSE, message=FALSE}
 
 join_birdwatch_ratings <- left_join(birdwatch_notes, filtered_rating, by = "noteId")
@@ -44,35 +44,68 @@ view(join_birdwatch_ratings)
 
 ```
 
-# Develop figures (2, 3, 4, 5c, 7a, 7b, 8 ,9)
+## Figure 2 - Trustworthy Sources
+### Figure 2: Number of users who responded "Yes" to the question, "Did you link to sources you believe most people would consider trustworthy?".
+
 ```{r figure-2, warning=FALSE, message=FALSE}
 
 birdwatch_notes %>%
   count(classification, trustworthySources) %>%
   ggplot(aes(x = classification, y = n, fill = factor(trustworthySources))) +
   geom_bar(stat = "identity", position = "stack") +
+  scale_x_discrete(labels = c(
+    "MISINFORMED_OR_POTENTIALLY_MISLEADING" = "Misleading",
+    "NOT_MISLEADING" = "Not Misleading"
+    )) +
   labs(fill = "Trustworthy Source")
 
 ```
+
+## Figure 3 - Number of Birdwatch Noted Per Checkbox (Misleading)
+### Figure 3: Number of users who checked the answer options in response to the question, "Why do you believe this tweet may be misleading?".
 
 ```{r figure-3, warning=FALSE, message=FALSE}
 birdwatch_notes %>%
 summarize(across(c(9:15),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
 ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+scale_x_discrete(labels = c(
+    "misleadingFactualError" = "Factual Error",
+    "misleadingMissingImportantContext" = "Missing Important Context",
+    "misleadingUnverifiedClaimAsFact" = "Unverified Claim as Fact",
+    "misleadingOutdatedInformation" = "Outdated Information",
+    "misleadingSatire" = "Satire",
+    "misleadingOther" = "Other",
+    "misleadingManipulatedMedia" = "Manipulated Media"
+    )) +
 xlab("Misleading Type") +
 ylab("Number of Bird Watch Notes")
 
 ```
+
+
+## Figure 4 - Number of Birdwatch Noted Per Checkbox ( Not Misleading)
+### Figure 4: Number of users who checked the answer options in response to the question, "Why do you believe this tweet is not misleading?".
 
 ```{r figure-4, warning=FALSE, message=FALSE}
 birdwatch_notes %>%
 summarize(across(c(16:20),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
 ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+scale_x_discrete(labels = c(
+    "notMisleadingFactuallyCorrect" = "Factually Correct",
+    "notMisleadingOutdatedButNotWhenWritten" = "Outdates but Not When Written",
+    "notMisleadingClearlySatire" = "Clearly Satire",
+    "notMisleadingOther" = "Other",
+    "notMisleadingPersonalOpinion" = "Personal Opinion"
+    )) +
 xlab("Not Misleading Type") +
 ylab("Number of Bird Watch Notes")
 ```
+
+
+## Figure 5c - Misleading Status
+### Figure 5c: The word count in text explanation of Birdwatch Notes.
 
 ```{r figure-5c, warning=FALSE, message=FALSE}
 
@@ -95,6 +128,10 @@ birdwatch_notes %>%
   ) +
   scale_y_log10(limit = c(0.01, 100),label = comma)
 ```
+
+
+## Figure 7a - Helpfulness Ratio
+### Figure 7a: The CCDFs for helpfulness ratio. 
 
 ```{r figure-7a, warning=FALSE, message=FALSE}
 
@@ -120,6 +157,10 @@ group_by(noteId, classification) %>%
 
 ```
 
+
+## Figure 7b - Total Votes
+### Figure 7b: The CCDFs for total votes. 
+
 ```{r figure-7b, warning=FALSE, message=FALSE}
 
 join_birdwatch_ratings %>% group_by(classification, noteId) %>% 
@@ -138,23 +179,50 @@ join_birdwatch_ratings %>% group_by(classification, noteId) %>%
 
 ```
 
+
+## Figure 8 - Number of Rating Per Checkbox (Helpful)
+### Figure 8: Number of rating per checkbox users checked in reponse to the question, "What about this note was helpful to you?".
 ```{r figure-8, warning=FALSE, message=FALSE}
 
 filtered_rating %>%
 summarize(across(c(10:17),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
 ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark blue") + coord_flip() +
+scale_x_discrete(labels = c( 
+  "helpfulClear" = "Clear",
+  "helpfulGoodSources" = "Good Sources",
+  "helpfulInformative" = "Informative",
+  "helpfulEmpathetic" = "Empathetic",
+  "helpfulAddressesClaim" = "Addresses Claim",
+  "helpfulUniqueContext" = "Unique Context",
+  "helpfulImportantContext" = "Important Context",
+  "helpfulOther" = " Other"
+)) +
 xlab("Helpfulness Type") +
 ylab("Number of Ratings")
 
 ```
 
-
+## Figure 9 - Number of Ratings Per Checkbox (Unhelpful)
+### Figure 9: Number of rating per checkbox users checked in reponse to the question, "Help us understand why this note was unhelpful?".
 ```{r figure-9, warning=FALSE, message=FALSE}
 filtered_rating %>%
 summarize(across(c(19:29),sum)) %>% 
 pivot_longer(everything(), names_to = "name", values_to = "total_count") %>% 
 ggplot(aes(x= reorder(name, total_count), y = total_count)) + geom_bar(stat = "identity",  fill = "dark red") + coord_flip() +
+scale_x_discrete(labels = c( 
+  "notHelpfulMissingKeyPoints" = "Missing Key Points",
+  "notHelpfulSourcesMissingOrUnreliable" = " Sources Missing or Unreliable",
+  "notHelpfulOpinionSpeculationOrBias" = " Opinion Speculation or Bias",
+  "notHelpfulArgumentativeOrBias" = " Argumentative or Inflammatory",
+  "notHelpfulIncorrect" = "Incorrect",
+  "notHelpfulOther" = "Other",
+  "notHelpfulOffTopic" = "Off Topic",
+  "notHelpfulHardToUnderstand" = "Hard to Understand",
+  "notHelpfulIrrelevantSources" = "Irrelevant Sources",
+  "notHelpfulSpamHarassmentOrAbuse" = "Spam Harassment or Abuse",
+  "notHelpfulOutdated" = "Outdated"
+))+
 xlab("Not Helpfulness Type") +
 ylab("Number of Ratings")
 
