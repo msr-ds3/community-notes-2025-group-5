@@ -1,8 +1,10 @@
 # Replication of “Community-Based Fact-Checking on Twitter’s Birdwatch Platform”
 
+By: Aisha Malik (CUNY Hunter College) & Vanessa Reino (Rider University)
+
 ## Overview
 
-This project is a replication and partial extension of the paper:
+This project is a replication of the paper:
 
 > **Community-Based Fact-Checking on Twitter’s Birdwatch Platform**
 > *Nicolas Proellochs, JLU Giessen, Germany*
@@ -11,9 +13,11 @@ This project is a replication and partial extension of the paper:
 
 This replication effort was inspired by a talk by **Johan Ugander** at the Microsoft Research Lab in New York.
 
-We replicate the results for Figures **2–4, 5c, and 7–10** from the original paper and provide an exploratory extension on political bias in user evaluations.
+We replicate the results for Figures **2–4, 5c, and 7–10** from the original paper using publicly available Birdwatch (now Community Notes) data.
 
-You can view the full interactive HTML report, including all replicated figures and extension results, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/7cd203ab0967735320bc549fb6eeb41c84c8ca40/05_birdwatch_report.html#Logistic_Regression)
+In addition to the replication, we propose a **conceptual extension** that explores how political bias might influence users' evaluations of Community Notes.
+
+You can view the full interactive HTML report, including all replicated figures, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/7cd203ab0967735320bc549fb6eeb41c84c8ca40/05_birdwatch_report.html)
 
 ---
 
@@ -31,7 +35,7 @@ To run the analysis, make sure the following R packages are installed:
 | `MASS`       | Provides functions and datasets to support Venables and Ripley's *Modern Applied Statistics with S*. Includes tools for fitting statistical models. |
 | `broom`      | Converts statistical analysis objects (e.g., models) into tidy data frames for easy plotting and comparison.                                        |
 
-> 💡 You'll also need a **Bash shell** to execute the `.sh` scripts located in the `scripts/` folder. These scripts automate downloading and formatting of Birdwatch data.
+> You will also need a **Bash shell** to execute the `.sh` scripts located in the **main repository folder**. These scripts automate downloading and formatting of Birdwatch data.
 
 To install all packages in R:
 
@@ -44,10 +48,15 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 ## Replication Steps
 
 1. **Read the paper**
-   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b 8, 9, and 10**. Other figures and tables not reproduced due to lack of access to proprietary data.
+   Focused replication of Figures **2, 3, 4, 5c, 7a, 7b, 8, 9, and 10**.
 
 2. **Download Data**
    Run the following shell scripts from the main directory to download and prepare the Birdwatch data:
+
+   * `01_download_notes_data.sh`
+   * `02_filter_notes_data.sh`
+   * `03_download_ratings.sh`
+   * `04_reformat_ratings.sh`
 
 3. **Analyze in R**
    The notebook `05_birdwatch_report.Rmd` contains the full analysis code and commentary.
@@ -72,18 +81,26 @@ install.packages(c("here", "scales", "tidyverse", "readr", "parameters", "MASS",
 
 ---
 
-## Extension: Political Leaning & Bias (RQ6)
+## Limitations & Data Notes
+
+* Our dataset was slightly smaller than that used in the original paper, containing **9,377 notes** and **45,885 ratings**, compared to **11,802 notes** and **52,981 ratings** in the original study.
+
+* Features including **sentiment** and **text complexity** were not included in the regression analysis, as these required additional NLP processing.
+
+---
+
+## Conceptual Extension: Political Leaning & Bias (RQ6)
 
 **Research Question:**
 
-> How does the political leaning of Birdwatch users—ranging from conservative to democratic—influence their likelihood of rating Community Notes as “misleading” or “not misleading,” especially on politically charged tweets?
+> How does the political leaning of Birdwatch users — ranging from conservative to democratic — influence their likelihood of rating Community Notes as “misleading” or “not misleading,” especially on politically charged tweets?
 
 **Goal:**
-This question aims to explore whether **user-assigned political orientation** affects the evaluation of fact-checking content within Community Notes. Unlike previous analyses that focused on the **content of tweets or notes themselves**, this extension shifts the lens to **user behavior and cognitive bias**. Specifically, we investigate how individuals with different ideological leanings assess the credibility of the same information.
+This question aims to explore whether **user-assigned political orientation** affects the evaluation of fact-checking content within Community Notes. Unlike previous analyses that focused on the **content of tweets or notes themselves**, this conceptual extension shifts the lens to **user behavior and cognitive bias**. Specifically, how individuals with different ideological leanings assess the credibility of the same information.
 
 The objective is to uncover **systemic patterns** that may reveal how political identity influences the interpretation of fact-checking efforts. This includes examining whether users across the political spectrum rate the same notes differently, particularly when notes are associated with politically sensitive or polarizing topics.
 
-Ultimately, this extension seeks to:
+Ultimately, this research question seeks to:
 
 * Identify **potential bias** in crowdsourced fact-checking processes,
 * Analyze **credibility attribution** trends among users with varying political leanings,
@@ -96,5 +113,3 @@ Ultimately, this extension seeks to:
 * All code is written to be reproducible and transparent.
 * Please cite the original authors for any derived work or insights.
 * Special thanks to the MSR DS3 team and Johan Ugander for the inspiration.
-
-
