@@ -17,7 +17,7 @@ We replicate the results for Figures **2–4, 5c, and 7–10** from the original
 
 In addition to the replication, we propose a **conceptual extension** that explores how political bias might influence users' evaluations of Community Notes.
 
-You can view the full interactive HTML report, including all replicated figures, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/7cd203ab0967735320bc549fb6eeb41c84c8ca40/05_birdwatch_report.html)
+You can view the full interactive HTML report, including all replicated figures, [**here**](https://rawcdn.githack.com/msr-ds3/community-notes-2025-group-5/c7e83ecd8ca608e951db509c2c5d3cf3e24ecc98/05_birdwatch_report.html#Logistic_Regression)
 
 ---
 
